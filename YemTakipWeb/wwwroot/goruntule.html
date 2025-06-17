@@ -1,0 +1,96 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <title>Verileri Görüntüle</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background-color: #e7f0fd; /* açık mavi arka plan */
+            color: #003366; /* koyu mavi yazı */
+        }
+
+        h2 {
+            color: #0059b3; /* orta koyu mavi */
+            border-bottom: 3px solid #ffcc00; /* sarı çizgi */
+            padding-bottom: 8px;
+            margin-bottom: 20px;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-top: 10px;
+            background-color: white;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+
+        th, td {
+            border: 1px solid #ccc;
+            padding: 10px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #ffcc00; /* sarı başlık */
+            color: #003300; /* koyu yeşil başlık yazısı */
+        }
+
+        tr:hover {
+            background-color: #dff0d8; /* açık yeşil hover */
+        }
+
+        a {
+            display: inline-block;
+            margin-top: 25px;
+            text-decoration: none;
+            background-color: #cc0000; /* kırmızı buton */
+            color: white;
+            padding: 10px 18px;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+            a:hover {
+                background-color: #ff3333;
+            }
+    </style>
+</head>
+<body>
+    <h2>📋 Yem Listesi</h2>
+    <div id="veriAlani">Yükleniyor...</div>
+    <a href="index.html">🔙 Geri Dön</a>
+
+    <script>
+        async function listele() {
+            const res = await fetch('/veri');
+            const data = await res.json();
+
+            let html = '<table><tr>';
+            for (let key in data[0]) {
+                html += `<th>${key}</th>`;
+            }
+            html += '</tr>';
+
+            for (let row of data) {
+                html += '<tr>';
+                for (let key in row) {
+                    let deger = row[key];
+
+                    if (typeof deger === 'string' && deger.includes('T') && !isNaN(Date.parse(deger))) {
+                        deger = deger.split('T')[0];
+                    }
+
+                    html += `<td>${deger}</td>`;
+                }
+                html += '</tr>';
+            }
+
+            html += '</table>';
+            document.getElementById("veriAlani").innerHTML = html;
+        }
+        listele();
+    </script>
+</body>
+</html>

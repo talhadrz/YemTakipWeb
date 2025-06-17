@@ -1,0 +1,106 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <title>Veri Sil</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            max-width: 400px;
+            margin: 40px auto;
+            background-color: #fde7e7; /* açık kırmızı/pembe */
+            color: #660000; /* koyu kırmızı */
+            border-radius: 8px;
+            box-shadow: 0 0 15px rgba(102, 0, 0, 0.2);
+        }
+
+        h2 {
+            text-align: center;
+            border-bottom: 3px solid #ffcc00; /* sarı çizgi */
+            padding-bottom: 8px;
+            margin-bottom: 20px;
+            color: #990000;
+        }
+
+        input, button {
+            width: 100%;
+            padding: 10px;
+            margin: 12px 0;
+            border-radius: 5px;
+            border: 1px solid #990000;
+            font-size: 16px;
+        }
+
+        button {
+            background-color: #009900; /* yeşil buton */
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+
+            button:hover {
+                background-color: #006600;
+            }
+
+        #sonuc {
+            margin-top: 15px;
+            font-weight: bold;
+            text-align: center;
+            color: #660000;
+        }
+
+        a {
+            display: block;
+            margin-top: 25px;
+            text-align: center;
+            text-decoration: none;
+            color: #003366; /* koyu mavi */
+            font-weight: bold;
+        }
+
+            a:hover {
+                text-decoration: underline;
+            }
+    </style>
+</head>
+<body>
+    <h2>❌ Veri Sil</h2>
+    <input id="silId" placeholder="Silinecek ID" type="number" />
+    <button onclick="sil()">Sil</button>
+    <div id="sonuc"></div>
+    <a href="index.html">🔙 Geri Dön</a>
+
+    <script>
+        async function sil() {
+            const id = document.getElementById("silId").value;
+            if (!id) {
+                document.getElementById("sonuc").innerText = "❗ Lütfen silinecek ID'yi girin.";
+                return;
+            }
+
+            const form = new FormData();
+            form.append("id", id);
+
+            try {
+                const response = await fetch('/sil', {
+                    method: 'POST',
+                    body: form
+                });
+
+                if (response.ok) {
+                    document.getElementById("sonuc").innerText = "❎ Veri silindi.";
+                    document.getElementById("silId").value = "";
+                } else {
+                    const hata = await response.text();
+                    document.getElementById("sonuc").innerText = "❌ Hata: " + hata;
+                }
+            } catch (error) {
+                document.getElementById("sonuc").innerText = "❌ İstek gönderilemedi: " + error;
+            }
+        }
+    </script>
+</body>
+</html>

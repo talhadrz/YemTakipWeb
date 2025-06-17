@@ -1,0 +1,119 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <title>Yeni Veri Ekle</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            max-width: 450px;
+            margin: 40px auto;
+            background-color: #dfffdf; /* açık yeşil */
+            color: #004d00; /* koyu yeşil yazı */
+            border-radius: 8px;
+            box-shadow: 0 0 15px rgba(0, 77, 0, 0.2);
+        }
+
+        h2 {
+            text-align: center;
+            color: #009900; /* parlak yeşil */
+            border-bottom: 3px solid #ffcc00; /* sarı çizgi */
+            padding-bottom: 8px;
+            margin-bottom: 20px;
+        }
+
+        input, button {
+            display: block;
+            width: 100%;
+            margin: 12px 0;
+            padding: 10px;
+            font-size: 16px;
+            border-radius: 5px;
+            border: 1px solid #009900;
+        }
+
+        button {
+            background-color: #0059b3; /* mavi buton */
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+
+            button:hover {
+                background-color: #003d7a;
+            }
+
+        #sonuc {
+            margin-top: 15px;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        a {
+            display: block;
+            margin-top: 25px;
+            text-align: center;
+            text-decoration: none;
+            color: #cc0000; /* kırmızı */
+            font-weight: bold;
+        }
+
+            a:hover {
+                text-decoration: underline;
+            }
+    </style>
+</head>
+<body>
+    <h2>➕ Yeni Veri Ekle</h2>
+
+    <input id="tarih" type="date" required />
+    <input id="ucret" placeholder="Ücret" type="number" step="0.01" required />
+    <input id="calisan" placeholder="Çalışan" type="number" step="1" required />
+    <input id="ton" placeholder="Ton" type="number" step="0.01" required />
+
+    <button onclick="ekle()">Ekle</button>
+    <div id="sonuc"></div>
+
+    <a href="index.html">🔙 Geri Dön</a>
+
+    <script>
+        async function ekle() {
+            const tarih = document.getElementById("tarih").value;
+            const ucret = parseFloat(document.getElementById("ucret").value);
+            const calisan = parseFloat(document.getElementById("calisan").value);
+            const ton = parseFloat(document.getElementById("ton").value);
+
+            if (!tarih || isNaN(ucret) || isNaN(calisan) || isNaN(ton)) {
+                document.getElementById("sonuc").innerText = "❗ Lütfen tüm alanları eksiksiz doldurun.";
+                return;
+            }
+
+            const veri = { Tarih: tarih, Ucret: ucret, Calisan: calisan, Ton: ton };
+
+            try {
+                const response = await fetch('/ekle', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(veri)
+                });
+
+                if (response.ok) {
+                    document.getElementById("sonuc").innerText = "✅ Veri başarıyla eklendi.";
+                    document.getElementById("tarih").value = "";
+                    document.getElementById("ucret").value = "";
+                    document.getElementById("calisan").value = "";
+                    document.getElementById("ton").value = "";
+                } else {
+                    const hataMesaji = await response.text();
+                    document.getElementById("sonuc").innerText = "❌ Hata oluştu: " + hataMesaji;
+                }
+            } catch (error) {
+                document.getElementById("sonuc").innerText = "❌ İstek gönderilemedi: " + error;
+            }
+        }
+    </script>
+</body>
+</html>
