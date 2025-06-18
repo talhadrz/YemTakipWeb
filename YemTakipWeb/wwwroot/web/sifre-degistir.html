@@ -1,0 +1,111 @@
+﻿<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>Şifre Değiştir</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f0f4f8;
+            max-width: 350px;
+            margin: 100px auto;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+        }
+
+        .input-container {
+            position: relative;
+            width: 90%;
+            margin: 15px auto;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #007bff;
+            border-radius: 6px;
+            font-size: 1em;
+            box-sizing: border-box;
+        }
+
+        .gizle-goster {
+            position: absolute;
+            right: 12px;
+            top: 12px;
+            cursor: pointer;
+            font-size: 1.2em;
+        }
+
+        button {
+            padding: 12px;
+            width: 100%;
+            background-color: #007bff;
+            color: white;
+            font-weight: bold;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin-top: 10px;
+        }
+
+            button:hover {
+                background-color: #0056b3;
+            }
+
+        #mesaj {
+            margin-top: 15px;
+            color: green;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>🔑 Şifre Değiştir</h2>
+
+    <div class="input-container">
+        <input type="password" id="eskiSifre" placeholder="Eski şifre">
+        <span class="gizle-goster" onclick="toggleGorunurluk('eskiSifre', this)">👁️</span>
+    </div>
+
+    <div class="input-container">
+        <input type="password" id="yeniSifre" placeholder="Yeni şifre">
+        <span class="gizle-goster" onclick="toggleGorunurluk('yeniSifre', this)">👁️</span>
+    </div>
+
+    <button onclick="sifreDegistir()">Değiştir</button>
+    <a href="index.html">🔙 Geri Dön</a>
+    <p id="mesaj"></p>
+
+    <script>
+        async function sifreDegistir() {
+            const eski = document.getElementById("eskiSifre").value;
+            const yeni = document.getElementById("yeniSifre").value;
+
+            const yanit = await fetch("/sifre-degistir", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ eski, yeni })
+            });
+
+            const sonuc = await yanit.text();
+            document.getElementById("mesaj").textContent = sonuc;
+        }
+
+        function toggleGorunurluk(inputId, span) {
+            const input = document.getElementById(inputId);
+            if (input.type === "password") {
+                input.type = "text";
+                span.textContent = "🙈";
+            } else {
+                input.type = "password";
+                span.textContent = "👁️";
+            }
+        }
+    </script>
+
+</body>
+</html>

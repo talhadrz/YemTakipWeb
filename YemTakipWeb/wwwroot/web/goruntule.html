@@ -60,6 +60,9 @@
 <body>
     <h2>📋 Yem Listesi</h2>
     <div id="veriAlani">Yükleniyor...</div>
+    <h1 id="gelir">Yükleniyor...</h1>
+    <h1 id="gun">Yükleniyor...</h1>
+
     <a href="index.html">🔙 Geri Dön</a>
 
     <script>
@@ -68,27 +71,25 @@
             const data = await res.json();
 
             let html = '<table><tr>';
-            for (let key in data[0]) {
+            for (let key in data.list[0]) {
                 html += `<th>${key}</th>`;
             }
             html += '</tr>';
-
-            for (let row of data) {
+            for (let row of data.list) {
                 html += '<tr>';
                 for (let key in row) {
                     let deger = row[key];
-
                     if (typeof deger === 'string' && deger.includes('T') && !isNaN(Date.parse(deger))) {
                         deger = deger.split('T')[0];
                     }
-
                     html += `<td>${deger}</td>`;
                 }
                 html += '</tr>';
             }
-
             html += '</table>';
             document.getElementById("veriAlani").innerHTML = html;
+            document.getElementById("gelir").innerHTML = "toplam ücretim: " + data.toplam;
+            document.getElementById("gun").innerHTML = "toplam çalışma günüm:" + data.gun;
         }
         listele();
     </script>

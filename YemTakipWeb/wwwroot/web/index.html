@@ -1,0 +1,200 @@
+﻿<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8" />
+    <title>Yem Yönetim</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 320px;
+            margin: 100px auto;
+            text-align: center;
+            background: #f0f4f8;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+        }
+
+        h2 {
+            color: #004080;
+            margin-bottom: 20px;
+        }
+
+        #sifrePanel {
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+
+        .sifre-kutu {
+            position: relative;
+            width: 90%;
+            margin: 0 auto 15px auto;
+        }
+
+        #sifreInput {
+            padding: 12px;
+            width: 100%;
+            border: 2px solid #007bff;
+            border-radius: 6px;
+            font-size: 1em;
+            outline: none;
+        }
+
+            #sifreInput:focus {
+                border-color: #0056b3;
+            }
+
+        .gizle-goster {
+            position: absolute;
+            right: 12px;
+            top: 12px;
+            cursor: pointer;
+            font-size: 1.2em;
+        }
+
+        #girisBtn {
+            width: 90%;
+            padding: 12px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+            #girisBtn:hover {
+                background-color: #0056b3;
+            }
+
+        #uyari {
+            color: red;
+            font-size: 0.9em;
+            margin-top: 10px;
+        }
+
+        button {
+            width: 100%;
+            padding: 15px;
+            margin: 10px 0;
+            font-size: 1.2em;
+            cursor: pointer;
+            border: none;
+            border-radius: 6px;
+            color: white;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+        }
+
+            button:disabled {
+                background-color: #ccc;
+                cursor: not-allowed;
+            }
+
+        .ekle {
+            background-color: #007bff;
+        }
+
+            .ekle:hover:not(:disabled) {
+                background-color: #0056b3;
+            }
+
+        .listele {
+            background-color: #ffc107;
+            color: #333;
+        }
+
+            .listele:hover:not(:disabled) {
+                background-color: #d39e00;
+                color: white;
+            }
+
+        .sil {
+            background-color: #28a745;
+        }
+
+            .sil:hover:not(:disabled) {
+                background-color: #1e7e34;
+            }
+
+        .cikis {
+            background-color: #dc3545;
+        }
+
+            .cikis:hover:not(:disabled) {
+                background-color: #c82333;
+            }
+    </style>
+</head>
+<body>
+
+    <h2>Yem Yönetim Paneli</h2>
+
+    <div id="sifrePanel">
+        <div class="sifre-kutu">
+            <input type="password" id="sifreInput" placeholder="🔐 Şifreyi girin" />
+            <span class="gizle-goster" onclick="toggleGorunurluk('sifreInput', this)">👁️</span>
+        </div>
+        <button id="girisBtn" onclick="dogrulaSifre()">Giriş Yap</button>
+        <p id="uyari"></p>
+    </div>
+
+    <button class="ekle" onclick="location.href='ekle.html'" disabled>Ekle</button>
+    <button class="listele" onclick="location.href='goruntule.html'" disabled>Listele</button>
+    <button class="sil" onclick="location.href='sil.html'" disabled>Sil</button>
+    <button class="sil" onclick="location.href='sifre-degistir.html'" disabled>Şifre Güncelle</button>
+    <button class="cikis" onclick="cikisYap()">Çıkış Yap</button>
+
+    <script>
+        let sunucuSifresi = "";
+
+        async function getSifre() {
+            const res = await fetch('/sifre');
+            const data = await res.json();
+            sunucuSifresi = data.sifre;
+
+            if (sessionStorage.getItem("girisYapildi") === "true") {
+                document.querySelectorAll("button:not(#girisBtn)").forEach(btn => btn.disabled = false);
+                document.getElementById("sifrePanel").style.display = "none";
+            }
+        }
+
+        function dogrulaSifre() {
+            const girilen = document.getElementById("sifreInput").value;
+            const uyari = document.getElementById("uyari");
+
+            if (girilen === sunucuSifresi) {
+                sessionStorage.setItem("girisYapildi", "true");
+                document.querySelectorAll("button:not(#girisBtn)").forEach(btn => btn.disabled = false);
+                document.getElementById("sifrePanel").style.display = "none";
+            } else {
+                uyari.textContent = "❌ Şifre yanlış. Lütfen tekrar deneyin.";
+            }
+        }
+
+        function cikisYap() {
+            sessionStorage.removeItem("girisYapildi");
+            location.reload(); // Sayfayı yenile ve şifreyi tekrar iste
+        }
+
+        function toggleGorunurluk(inputId, span) {
+            const input = document.getElementById(inputId);
+            if (input.type === "password") {
+                input.type = "text";
+                span.textContent = "🙈";
+            } else {
+                input.type = "password";
+                span.textContent = "👁️";
+            }
+        }
+
+        // Sayfa yüklenince şifre kontrolünü yap
+        getSifre();
+    </script>
+
+</body>
+</html>
